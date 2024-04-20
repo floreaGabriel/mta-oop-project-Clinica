@@ -80,6 +80,7 @@ bool ServerConnection::listenForConnections() {
 
 	// Accept incoming connections
 	while (true) {
+		std::cout << "ma aflu in listen for connections!\n";
 		std::cout << "Waiting for incoming connection...\n";
 		int clientSocket = accept(serverSocket, nullptr, nullptr);
 		if (clientSocket == -1) {

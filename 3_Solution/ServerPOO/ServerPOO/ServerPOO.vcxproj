@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="DataBase.h" />
+    <ClInclude Include="Header.h" />
     <ClInclude Include="ServerConnection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

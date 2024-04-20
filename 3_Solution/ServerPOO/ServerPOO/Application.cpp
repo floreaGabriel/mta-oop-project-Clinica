@@ -15,6 +15,8 @@ Application& Application::getInstance()
 
 bool Application::manageData(char* data)
 {
+    // de facut o clasa de utils care va avea functiile de gestionare a stringurilor, datelor ..
+
     char metaByte;
     metaByte = data[0];
     strcpy(data, data + 1);

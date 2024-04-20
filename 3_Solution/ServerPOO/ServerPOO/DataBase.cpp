@@ -26,7 +26,7 @@
 //    std::cout << "\n";
 //    //connect to SQL Server  
 //    //I am using a trusted connection and port 14808
-//    //it does not matter if you are using default or named instance
+//    //it does not matter if you are using defaul t or named instance
 //    //just make sure you define the server name and the port
 //    //You have the option to use a username/password instead of a trusted connection
 //    //but is more secure to use a trusted connection
