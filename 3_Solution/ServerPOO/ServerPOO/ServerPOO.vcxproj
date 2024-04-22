@@ -104,6 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\Microsoft SQL Server\Client SDK\ODBC\170\SDK\Lib\x64;C:\Program Files (x86)\Microsoft SQL Server\Client SDK\ODBC\170\SDK\Include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,14 +129,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CUtils.cpp" />
+    <ClCompile Include="BDComm.cpp" />
+    <ClCompile Include="IRequest.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RequestRegNormalUser.cpp" />
     <ClCompile Include="ServerConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="CUtils.h" />
+    <ClInclude Include="BDComm.h" />
+    <ClInclude Include="IRequest.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="Header.h" />
+    <ClInclude Include="RequestRegNormalUser.h" />
     <ClInclude Include="ServerConnection.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

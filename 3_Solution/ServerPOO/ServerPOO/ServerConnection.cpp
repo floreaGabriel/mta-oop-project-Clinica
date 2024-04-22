@@ -8,6 +8,9 @@
 #pragma comment (lib, "AdvApi32.lib")
 
 #include "Application.h"
+#include "RequestRegNormalUser.h"
+#include "DataBase.h"
+//#include "BDComm.h"
 
 #include <iostream>
 #include <windows.h>
@@ -77,17 +80,16 @@ bool ServerConnection::listenForConnections() {
 		std::cerr << "Error: Listen failed\n";
 		return false;
 	}
-
+	std::cout << "Waiting for incoming connection...\n";
 	// Accept incoming connections
 	while (true) {
-		std::cout << "ma aflu in listen for connections!\n";
-		std::cout << "Waiting for incoming connection...\n";
 		int clientSocket = accept(serverSocket, nullptr, nullptr);
 		if (clientSocket == -1) {
 			std::cerr << "Error: Accept failed\n";
 			continue;
 		} 
-		
+		std::cout << "ma aflu in listen for connections!in while\n";
+
 		std::cout << "Connection accepted from client!\n";
 		// Create a new thread to handle the client
 		std::thread clientThread(&ServerConnection::handleClient, this, clientSocket);
@@ -110,8 +112,25 @@ void ServerConnection::handleClient(int clientSocket) {
 	}
 	else {
 		buffer[bytesReceived] = '\0'; // Null-terminate the received data
-			
-		Application::getInstance().manageData(buffer);
+		
+		
+		if (DataBase::getInstance().connect())
+		{
+			printf("Conectat la baza de date!\n");
+		}
+		else
+		{
+			printf("Nu se poate realiza conexiunea cu baza de date!\n");
+		}
+		IRequest* request = IRequest::Factory::requestSelector(buffer);
+		request->manage_request();
+
+		
+		int answear = request->manage_answear();
+
+		memset(buffer, 0, sizeof(buffer));
+
+		send(clientSocket, (char*)&answear, sizeof(answear), 0);
 			
 		//std::cout << "Received data from client: " << buffer << std::endl;
 	}
