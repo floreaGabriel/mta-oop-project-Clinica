@@ -9,6 +9,7 @@
 
 using namespace std;
 
+#define SQL_RESULT_LEN 240
 #define SQL_RETURN_CODE_LEN 1000
 
 class DataBase
@@ -22,11 +23,14 @@ public:
 		return *m_instance;
 	}
 
-	bool connect(/*const std::string& server, const std::string& user, const std::string& password*/);
+	bool connect();
 	void disconnect();
-	bool executeQuery(const std::string& query);
-	std::vector<std::vector<std::string>> select(const std::string& query);
+	bool executeQuery(const wstring& query);
+	std::vector<std::wstring> selectQuery(const std::wstring& query);
 
+	SQLHANDLE getSTMT() { return sqlStmtHandle; }
+	SQLHANDLE getconn() { return sqlConnHandle; }
+	SQLHANDLE getEnv() { return sqlEnvHandle; }
 private:
 
 

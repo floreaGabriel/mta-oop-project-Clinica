@@ -6,7 +6,7 @@ class IRequest
 {
 public:
 	virtual void manage_request() = 0;
-	virtual int manage_answear() = 0;
+	virtual char * manage_answear() = 0;
 
 	class Factory {
 	public:

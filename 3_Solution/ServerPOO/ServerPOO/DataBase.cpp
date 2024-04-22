@@ -2,142 +2,183 @@
 
 DataBase* DataBase::m_instance = nullptr;
 
-DataBase::DataBase() {
-    sqlConnHandle = NULL;
-    sqlStmtHandle = NULL;
-    if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sqlEnvHandle))
-        disconnect();
-    if (SQL_SUCCESS != SQLSetEnvAttr(sqlEnvHandle, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0))
-        disconnect();
-    if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_DBC, sqlEnvHandle, &sqlConnHandle))
-        disconnect();
-    cout << "Attempting connection to SQL Server...";
-    cout << "\n";
-}
+DataBase::DataBase() {}
 
 DataBase::~DataBase() {
     disconnect();
 }
 
 
-bool DataBase::connect(/*const std::string& server, const std::string& user, const std::string& password*/) {
-    // Conectare la bază de date
-    /*SQLWCHAR serverName[256], userName[256], passWord[256];
-    strcpy((char*)serverName, server.c_str());
-    strcpy((char*)userName, user.c_str());
-    strcpy((char*)passWord, password.c_str());
 
-    if (SQLConnect(hDbc, serverName, SQL_NTS, userName, SQL_NTS, passWord, SQL_NTS) != SQL_SUCCESS)
-        return false;
+bool DataBase::connect()
+{
+    // Allocate environment handle
+    if (SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sqlEnvHandle) != SQL_SUCCESS)
+    {
+        cerr << "Error allocating environment handle" << endl;
+        return -1;
+    }
 
-    return true;*/
-    
-    
+    // Set the ODBC version environment attribute
+    if (SQLSetEnvAttr(sqlEnvHandle, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0) != SQL_SUCCESS)
+    {
+        cerr << "Error setting the ODBC version environment attribute" << endl;
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return -1;
+    }
 
-    //connect to SQL Server  
-    //I am using a trusted connection and port 14808
-    //it does not matter if you are using default or named instance
-    //just make sure you define the server name and the port
-    //You have the option to use a username/password instead of a trusted connection
-    //but is more secure to use a trusted connection
-    switch (SQLDriverConnect(sqlConnHandle, NULL, (SQLWCHAR*)L"DRIVER={SQL Server};SERVER=localhost, 55555;DATABASE=LoginAccounts;Trusted=true;",
-        SQL_NTS, retconstring, 1024, NULL, SQL_DRIVER_NOPROMPT)) {
-    case SQL_SUCCESS:
-        cout << "Successfully connected to SQL Server";
-        cout << "\n";
-        break;
+    // Allocate connection handle
+    if (SQLAllocHandle(SQL_HANDLE_DBC, sqlEnvHandle, &sqlConnHandle) != SQL_SUCCESS)
+    {
+        cerr << "Error allocating connection handle" << endl;
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return -1;
+    }
+
+    // Connection string
+    SQLWCHAR connectionStr[] = L"DRIVER={SQL SERVER};SERVER=localhost, 55555;DATABASE=LoginAccounts;Trusted_Connection=Yes;";
+    // Connect to SQL Server
+    std::cout << "waiting..\n";
+
+    switch (SQLDriverConnect(sqlConnHandle, NULL, connectionStr, SQL_NTS, retconstring, SQL_RETURN_CODE_LEN, NULL, SQL_DRIVER_NOPROMPT))
+    {
     case SQL_SUCCESS_WITH_INFO:
-        cout << "Successfully connected to SQL Server";
-        cout << "\n";
         break;
     case SQL_INVALID_HANDLE:
-        cout << "Could not connect to SQL Server";
-        cout << "\n";
-        disconnect();
     case SQL_ERROR:
-        cout << "Could not connect to SQL Server";
-        cout << "\n";
-        disconnect();
+        cerr << "Error connecting to SQL Server" << endl;
+        SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return -1;
     default:
         break;
     }
-    //if there is a problem connecting then exit application
-    if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle))
+    std::cout << "Done waiting..\n";
+
+
+}
+
+
+bool DataBase::executeQuery(const std::wstring& query)
+{
+    // Allocate statement handle
+    if (SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle) != SQL_SUCCESS)
     {
-        disconnect();
-        return false;
+        cerr << "Error allocating statement handle" << endl;
+        SQLDisconnect(sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return 0;
     }
 
-    return true;
-}
 
-void DataBase::disconnect() {
-    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
-    SQLDisconnect(sqlConnHandle);
-    SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
-    SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
-}
 
-bool DataBase::executeQuery(const std::string& query) {
-    //SQLAllocHandle(SQL_HANDLE_STMT, hDbc, &hStmt);
-    //return SQLExecDirect(hStmt, (SQLWCHAR*)query.c_str(), SQL_NTS) == SQL_SUCCESS;
-    SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle);
+    //// Define variables for the values to be inserted
+    //string value1;
+    //int value2;
 
-    // Verificarea dacă s-a făcut cu succes alocarea unui handle pentru instrucțiunea SQL
-    if (sqlStmtHandle == SQL_NULL_HSTMT) {
-        std::cerr << "Error: Failed to allocate statement handle\n";
-        return false;
-    }
+    //cout << "Introdu valori: "; cin >> value1 >> value2;
 
-    // Executarea instrucțiunii SQL
-    SQLRETURN ret = SQLExecDirectW(sqlStmtHandle, (SQLWCHAR*)query.c_str(), SQL_NTS);
 
-    // Verificarea rezultatului execuției instrucțiunii SQL
-    if (ret != SQL_SUCCESS) {
-        // Afișarea erorii
-        SQLWCHAR sqlstate[6];
-        SQLWCHAR message[SQL_MAX_MESSAGE_LENGTH];
-        SQLINTEGER native_error;
-        SQLSMALLINT message_length;
+    // Bind parameter values to the prepared statement
+    //SQLWCHAR* sqlQuery = (SQLWCHAR*)L"INSERT INTO tabela (mere,pere) VALUES (?, ?)";
+    SQLWCHAR* sqlQuery = (SQLWCHAR*)query.c_str();
 
-        SQLGetDiagRec(SQL_HANDLE_STMT, sqlStmtHandle, 1, sqlstate, &native_error, message, sizeof(message), &message_length);
-        std::cerr << "Error: SQLExecDirect failed (" << ret << "): " << message << std::endl;
-
-        // Eliberarea handle-ului de instrucțiune SQL
+    if (SQLPrepare(sqlStmtHandle, sqlQuery, SQL_NTS) != SQL_SUCCESS)
+    {
+        cerr << "Error preparing SQL statement" << endl;
         SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
-
-        return false;
+        SQLDisconnect(sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return 0;
     }
 
-    // Eliberarea handle-ului de instrucțiune SQL
-    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+    //// Bind parameter values to the prepared statement
+    //if (SQLBindParameter(sqlStmtHandle, 1, SQL_PARAM_INPUT, SQL_C_CHAR, SQL_VARCHAR, value1.length(), 0, (SQLPOINTER)value1.c_str(), 0, NULL) != SQL_SUCCESS ||
+    //    SQLBindParameter(sqlStmtHandle, 2, SQL_PARAM_INPUT, SQL_C_LONG, SQL_INTEGER, 0, 0, &value2, 0, NULL) != SQL_SUCCESS)
+    //{
+    //    cerr << "Error binding parameter values" << endl;
+    //    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+    //    SQLDisconnect(sqlConnHandle);
+    //    SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+    //    SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+    //    return 0;
+    //}
 
-    return true;
+    if (SQLExecDirect(sqlStmtHandle, sqlQuery, SQL_NTS) != SQL_SUCCESS)
+    {
+        cerr << "Error executing SQL query" << endl;
+        SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+        SQLDisconnect(sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+        SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+        return 0;
+    }
+
+
+
+    cout << "Values inserted successfully" << endl;
+
+    return 1;
+
 }
 
-std::vector<std::vector<std::string>> DataBase::select(const std::string& query) {
-    std::vector<std::vector<std::string>> result;
 
-    if (executeQuery(query)) {
-        // Procesare rezultate
-        while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
-            std::vector<std::string> row;
-            SQLCHAR data[256];
-
-            for (int i = 1; ; ++i) {
-                SQLGetData(sqlStmtHandle, i, SQL_CHAR, data, sizeof(data), NULL);
-                if (SQL_SUCCEEDED(SQLFetch(sqlStmtHandle))) {
-                    row.push_back((char*)data);
-                }
-                else {
-                    break;
-                }
-            }
-
-            result.push_back(row);
-        }
+std::vector<std::wstring> DataBase::selectQuery(const std::wstring& query) {
+   
+    std::vector<std::wstring> results; // Vector pentru a stoca rezultatele
+    
+    // Verificați dacă există deja un handle de instrucțiune alocat
+    if (SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle) != SQL_SUCCESS) {
+        std::cerr << "Error allocating statement handle" << std::endl;
+        return results;
     }
 
+    // Convertiți interogarea într-un șir de caractere SQLWCHAR
+    SQLWCHAR* sqlQuery = (SQLWCHAR*)query.c_str();
+
+    // Executați interogarea SELECT
+    if (SQLExecDirect(sqlStmtHandle, sqlQuery, SQL_NTS) != SQL_SUCCESS) {
+        std::cerr << "Error executing SQL query" << std::endl;
+        SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+        return results;
+    }
+
+    // Declarați o variabilă pentru a stoca rezultatul interogării SELECT
+    SQLWCHAR result[1024];
+    SQLLEN resultLen = 0;
+
+    // Iterați prin toate rândurile obținute din interogare
+    while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
+        // Acest exemplu presupune că datele întoarse sunt în coloana 1
+        SQLGetData(sqlStmtHandle, 1, SQL_C_WCHAR, result, sizeof(result), &resultLen);
+
+        // Adăugați rezultatul la vectorul de rezultate
+        results.push_back(std::wstring(result));
+    }
+
+    // Eliberați handle-ul de instrucțiune
     SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
-    return result; // functia imi returneaza query-ul pe care i l am dat eu ca parametru si mi l pune in result
+
+    // Returnați rezultatul sub formă de șir de caractere wide
+    return results;
+}
+
+
+
+void DataBase::disconnect()
+{
+    // Free statement handle
+    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+
+    // Disconnect from SQL Server
+    SQLDisconnect(sqlConnHandle);
+
+    // Free connection handle
+    SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
+
+    // Free environment handle
+    SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+
 }

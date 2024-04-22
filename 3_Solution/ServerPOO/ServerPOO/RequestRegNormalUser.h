@@ -12,15 +12,16 @@ public:
 		m_email = nullptr;
 		m_phoneNumber = nullptr;
 		m_CNP = nullptr;
-		m_answear = 0;
+		m_answear = nullptr;
 	}
 	RequestRegNormalUser(std::string);
 
 	void manage_request() override;
-	int manage_answear() override;
+	char * manage_answear() override;
 
 private:
 	
+	std::string m_username;
 	std::string m_nume;
 	std::string m_prenume;
 	std::string m_password;
@@ -28,6 +29,6 @@ private:
 	std::string m_phoneNumber;
 	std::string m_CNP;
 	
-	int m_answear;
+	char * m_answear;
 };
 
