@@ -110,9 +110,11 @@ void ServerConnection::handleClient(int clientSocket) {
 		int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
 		if (bytesReceived == SOCKET_ERROR) {
 			std::cerr << "Error: Receive failed\n";
+			break;
 		}
 		else if (bytesReceived == 0) {
 			std::cerr << "Client disconnected\n";
+			break;
 		}
 		else {
 			buffer[bytesReceived] = '\0'; // Null-terminate the received data

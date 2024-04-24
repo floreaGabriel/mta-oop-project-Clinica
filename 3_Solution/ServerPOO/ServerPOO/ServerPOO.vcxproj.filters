@@ -36,7 +36,13 @@
     <ClCompile Include="RequestRegNormalUser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BDComm.cpp">
+    <ClCompile Include="RequestDoctorUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestLoginNormalUser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestLoginDoctor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,9 +56,6 @@
     <ClInclude Include="DataBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IRequest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -62,7 +65,13 @@
     <ClInclude Include="RequestRegNormalUser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BDComm.h">
+    <ClInclude Include="RequestDoctorUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestLoginNormalUser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestLoginDoctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

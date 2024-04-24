@@ -10,11 +10,10 @@ RequestRegNormalUser::RequestRegNormalUser(std::string data)
 	this->m_username = splitted_data[1];
 	this->m_nume = splitted_data[2];
 	this->m_prenume = splitted_data[3];
-	this->m_password = splitted_data[4];
-	this->m_email = splitted_data[5];
+	this->m_email = splitted_data[4];
+	this->m_password = splitted_data[5];
 	this->m_phoneNumber = splitted_data[6];
 	this->m_CNP = splitted_data[7];
-
 }
 
 void RequestRegNormalUser::manage_request()
@@ -38,7 +37,7 @@ void RequestRegNormalUser::manage_request()
 		+ "','" + this->m_password + "','" + this->m_phoneNumber + "','" + this->m_CNP + "')";
 
 	std::wstring wquery(query.begin(), query.end());
-
+	 
 	bool flag = DataBase::getInstance().executeQuery(wquery);
 
 	// verific daca userul a fost inserat cu succes
