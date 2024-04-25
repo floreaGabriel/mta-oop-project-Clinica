@@ -10,6 +10,8 @@
 #include "Application.h"
 #include "RequestRegNormalUser.h"
 #include "DataBase.h"
+#include "Exception.h"
+
 //#include "BDComm.h"
 
 #include <iostream>
@@ -106,44 +108,75 @@ void ServerConnection::handleClient(int clientSocket) {
 
 	while (true)
 	{
-		std::cout << "(Asteapta interactiune de la client...)\n";
-		int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
-		if (bytesReceived == SOCKET_ERROR) {
-			std::cerr << "Error: Receive failed\n";
+		try {
+
+			std::cout << " <------- Asteapta interactiune de la client ------->\n";
+			int bytesReceived = recv(clientSocket, buffer, sizeof(buffer), 0);
+			if (bytesReceived == SOCKET_ERROR) {
+				throw Exception("Primirea datelor a esuat!\n", 20);
+				break;
+			}
+			else if (bytesReceived == 0) {
+				throw Exception("Client deconectat!\n", 21);
+				break;
+			}
+			else {
+				cout << "Datele s-au primit cu succes!\n";
+				buffer[bytesReceived] = '\0'; // Null-terminate the received data
+
+
+
+				if (DataBase::getInstance().connect())
+				{
+					printf("Conectat la baza de date!\n");
+				}
+				else
+				{
+					throw Exception("Nu se poate conecta la baza de date!\n", 22);
+				}
+
+				IRequest* request = IRequest::Factory::requestSelector(buffer);
+				request->manage_request();
+
+				DataBase::getInstance().disconnect();
+
+				char* answear = request->manage_answear();
+
+				// resetez bufferul in care am primit datele initiale
+				memset(buffer, 0, sizeof(buffer));
+
+				if (strcmp(answear, "4") == 0)
+				{
+					char* answear2 = (char*)malloc(sizeof("4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null"));
+
+					strcpy(answear2, "4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null");
+					send(clientSocket, answear2, strlen(answear2), 0);
+					int i = 0;
+					while (recv(clientSocket, buffer, sizeof(buffer), 0) > 0 && memcmp(buffer, "MORE", strlen("MORE")) == 0 && i++ < 3)
+					{
+						strcpy(answear2, "4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null");
+						send(clientSocket, answear2, strlen(answear2), 0);
+					}
+					
+					strcpy(answear2, "AM TERMINAT");
+					send(clientSocket, answear2, strlen(answear2), 0);
+				}
+				else
+				{
+					send(clientSocket, answear, strlen(answear), 0);
+				}
+				
+
+				printf("Raspuns trimis catre client: %s!\n", answear);
+				//std::cout << "Received data from client: " << buffer << std::endl;
+			}
+		}
+		catch (const Exception& e)
+		{
+			std::cerr << "Eroare [" << e.getErrorCode() << "] cu mesajul: " + e.getMessage() + " ;\n";
 			break;
 		}
-		else if (bytesReceived == 0) {
-			std::cerr << "Client disconnected\n";
-			break;
-		}
-		else {
-			buffer[bytesReceived] = '\0'; // Null-terminate the received data
-
-
-
-			if (DataBase::getInstance().connect())
-			{
-				printf("Conectat la baza de date!\n");
-			}
-			else
-			{
-				printf("Nu se poate realiza conexiunea cu baza de date!\n");
-			}
-
-			IRequest* request = IRequest::Factory::requestSelector(buffer);
-			request->manage_request();
-
-			DataBase::getInstance().disconnect();
-
-			char* answear = request->manage_answear();
-
-			memset(buffer, 0, sizeof(buffer));
-
-			send(clientSocket, answear, strlen(answear), 0);
-
-			printf("Raspuns trimis catre client: %s!\n", answear);
-			//std::cout << "Received data from client: " << buffer << std::endl;
-		}
+		
 	}
 	
 

@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Exception.cpp" />
     <ClCompile Include="RequestLoginDoctor.cpp" />
     <ClCompile Include="CUtils.cpp" />
     <ClCompile Include="IRequest.cpp" />
@@ -136,17 +137,21 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RequestDoctorUser.cpp" />
     <ClCompile Include="RequestLoginNormalUser.cpp" />
+    <ClCompile Include="RequestProgramare.cpp" />
     <ClCompile Include="RequestRegNormalUser.cpp" />
     <ClCompile Include="ServerConnection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="Programare.h" />
     <ClInclude Include="RequestLoginDoctor.h" />
     <ClInclude Include="CUtils.h" />
     <ClInclude Include="IRequest.h" />
     <ClInclude Include="DataBase.h" />
     <ClInclude Include="RequestDoctorUser.h" />
     <ClInclude Include="RequestLoginNormalUser.h" />
+    <ClInclude Include="RequestProgramare.h" />
     <ClInclude Include="RequestRegNormalUser.h" />
     <ClInclude Include="ServerConnection.h" />
   </ItemGroup>

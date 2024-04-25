@@ -22,49 +22,6 @@ std::vector<std::string> CUtils::understandData(std::string data, char delimiter
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	words.push_back(tmp); // adaug ultimul cuvant deoarece la final nu mai are #
 
 	return words;

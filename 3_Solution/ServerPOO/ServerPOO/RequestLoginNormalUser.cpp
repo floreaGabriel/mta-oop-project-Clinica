@@ -18,6 +18,7 @@ void RequestLoginNormalUser::manage_request()
 	std::vector<std::wstring> select_result = DataBase::getInstance().selectQuery(std::wstring(string_cautare_dupa_username.begin(), string_cautare_dupa_username.end()));
 
 	// Daca exista trimit mesaj la client ca deja exista acest user
+	// !!!!!!!!!!!!!! trimite datele userului
 	if (select_result.size() != 0)
 	{
 		std::string result(select_result[0].begin(), select_result[0].end());

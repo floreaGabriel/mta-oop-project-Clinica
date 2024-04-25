@@ -152,7 +152,7 @@ std::vector<std::wstring> DataBase::selectQuery(const std::wstring& query) {
     // Iterați prin toate rândurile obținute din interogare
     while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
         // Acest exemplu presupune că datele întoarse sunt în coloana 1
-        SQLGetData(sqlStmtHandle, 1, SQL_C_WCHAR, result, sizeof(result), &resultLen);
+        SQLGetData(sqlStmtHandle, 2, SQL_C_WCHAR, result, sizeof(result), &resultLen);
 
         // Adăugați rezultatul la vectorul de rezultate
         results.push_back(std::wstring(result));
@@ -162,6 +162,76 @@ std::vector<std::wstring> DataBase::selectQuery(const std::wstring& query) {
     SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
 
     // Returnați rezultatul sub formă de șir de caractere wide
+    return results;
+}
+
+std::vector<std::vector<std::wstring>> DataBase::selectQuery2(const std::wstring& query) {
+    std::vector<std::vector<std::wstring>> results; // Vector pentru a stoca rezultatele
+
+    // Verificați dacă există deja un handle de instrucțiune alocat
+    if (SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle) != SQL_SUCCESS) {
+        std::cerr << "Error allocating statement handle" << std::endl;
+        return results;
+    }
+
+    // Convertiți interogarea într-un șir de caractere SQLWCHAR
+    SQLWCHAR* sqlQuery = (SQLWCHAR*)query.c_str();
+
+    // Executați interogarea SELECT
+    if (SQLExecDirect(sqlStmtHandle, sqlQuery, SQL_NTS) != SQL_SUCCESS) {
+        std::cerr << "Error executing SQL query" << std::endl;
+        SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+        return results;
+    }
+
+    // Declarați un vector temporar pentru a stoca datele dintr-un rând
+    std::vector<std::wstring> rowData;
+
+    // Declarați un vector pentru a stoca lungimea datelor din fiecare coloană
+    std::vector<SQLLEN> colLengths;
+
+    // Iterați prin fiecare rând și colectați datele din fiecare coloană
+    while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
+        // Resetați vectorul temporar pentru a stoca datele dintr-un nou rând
+        rowData.clear();
+        colLengths.clear();
+
+        // Obțineți numărul de coloane din rândul curent
+        SQLSMALLINT numCols = 0;
+        SQLNumResultCols(sqlStmtHandle, &numCols);
+
+        // Iterați prin fiecare coloană din rând
+        for (SQLSMALLINT i = 1; i <= numCols; ++i) {
+            // Declarați o variabilă pentru a stoca rezultatul din coloana curentă
+            SQLWCHAR result[1024];
+            SQLLEN resultLen = 0;
+
+            // Obțineți datele din coloana curentă
+            SQLGetData(sqlStmtHandle, i, SQL_C_WCHAR, result, sizeof(result), &resultLen);
+
+            // Adăugați datele în vectorul temporar
+
+            if (resultLen == -1)
+            {
+                rowData.push_back(std::wstring(L"NULL"));
+            }
+            else
+            {
+                rowData.push_back(std::wstring(result));
+            }
+
+            // Salvați lungimea datelor pentru a gestiona caracterele NULL
+            colLengths.push_back(resultLen);
+        }
+
+        // Adăugați datele din vectorul temporar în vectorul de rezultate
+        results.push_back(rowData);
+    }
+
+    // Eliberați handle-ul de instrucțiune
+    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
+
+    // Returnați rezultatele
     return results;
 }
 
