@@ -11,6 +11,7 @@
 #include "RequestRegNormalUser.h"
 #include "DataBase.h"
 #include "Exception.h"
+#include "CUtils.h"
 
 //#include "BDComm.h"
 
@@ -145,27 +146,9 @@ void ServerConnection::handleClient(int clientSocket) {
 				// resetez bufferul in care am primit datele initiale
 				memset(buffer, 0, sizeof(buffer));
 
-				if (strcmp(answear, "4") == 0)
-				{
-					char* answear2 = (char*)malloc(sizeof("4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null"));
+				send(clientSocket, answear, strlen(answear), 0);
 
-					strcpy(answear2, "4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null");
-					send(clientSocket, answear2, strlen(answear2), 0);
-					int i = 0;
-					while (recv(clientSocket, buffer, sizeof(buffer), 0) > 0 && memcmp(buffer, "MORE", strlen("MORE")) == 0 && i++ < 3)
-					{
-						strcpy(answear2, "4#Milea#Alexandru#5030623284579#PROGRAMAT#Null#Null#PROGRAMAT#Null#Null#Null#Null#Null#Null#Null#Null#test#Null#Null#Null");
-						send(clientSocket, answear2, strlen(answear2), 0);
-					}
-					
-					strcpy(answear2, "AM TERMINAT");
-					send(clientSocket, answear2, strlen(answear2), 0);
-				}
-				else
-				{
-					send(clientSocket, answear, strlen(answear), 0);
-				}
-				
+							
 
 				printf("Raspuns trimis catre client: %s!\n", answear);
 				//std::cout << "Received data from client: " << buffer << std::endl;
@@ -174,7 +157,10 @@ void ServerConnection::handleClient(int clientSocket) {
 		catch (const Exception& e)
 		{
 			std::cerr << "Eroare [" << e.getErrorCode() << "] cu mesajul: " + e.getMessage() + " ;\n";
-			break;
+			send(clientSocket, "NOK", strlen("NOK"), 0);
+			if (e.getErrorCode() == 20) break;
+			if (e.getErrorCode() == 21) break;
+			continue;
 		}
 		
 	}

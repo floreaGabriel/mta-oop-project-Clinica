@@ -152,7 +152,7 @@ std::vector<std::wstring> DataBase::selectQuery(const std::wstring& query) {
     // Iterați prin toate rândurile obținute din interogare
     while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
         // Acest exemplu presupune că datele întoarse sunt în coloana 1
-        SQLGetData(sqlStmtHandle, 2, SQL_C_WCHAR, result, sizeof(result), &resultLen);
+        SQLGetData(sqlStmtHandle, 1, SQL_C_WCHAR, result, sizeof(result), &resultLen);
 
         // Adăugați rezultatul la vectorul de rezultate
         results.push_back(std::wstring(result));

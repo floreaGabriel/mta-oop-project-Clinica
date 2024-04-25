@@ -138,6 +138,7 @@
     <ClCompile Include="RequestDoctorUser.cpp" />
     <ClCompile Include="RequestLoginNormalUser.cpp" />
     <ClCompile Include="RequestProgramare.cpp" />
+    <ClCompile Include="RequestRegisterProgramare.cpp" />
     <ClCompile Include="RequestRegNormalUser.cpp" />
     <ClCompile Include="ServerConnection.cpp" />
   </ItemGroup>
@@ -152,6 +153,7 @@
     <ClInclude Include="RequestDoctorUser.h" />
     <ClInclude Include="RequestLoginNormalUser.h" />
     <ClInclude Include="RequestProgramare.h" />
+    <ClInclude Include="RequestRegisterProgramare.h" />
     <ClInclude Include="RequestRegNormalUser.h" />
     <ClInclude Include="ServerConnection.h" />
   </ItemGroup>

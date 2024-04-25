@@ -9,7 +9,7 @@ RequestDoctorUser::RequestDoctorUser(std::string data) : RequestRegNormalUser(da
 
 void RequestDoctorUser::manage_request()
 {
-	std::string string_cautare_dupa_username = "SELECT NUME FROM Doctors WHERE Username = '" + m_username + "'";
+	std::string string_cautare_dupa_username = "SELECT Nume FROM Doctors WHERE Username = '" + m_username + "'";
 
 	// Caut in baza de date daca exista deja userul
 	std::vector<std::wstring> select_result = DataBase::getInstance().selectQuery(std::wstring(string_cautare_dupa_username.begin(), string_cautare_dupa_username.end()));
