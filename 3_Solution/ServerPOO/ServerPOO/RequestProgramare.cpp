@@ -19,7 +19,7 @@ RequestProgramare::RequestProgramare(std::string data)
 void RequestProgramare::manage_request()
 {
 
-    std::string string_cautare = "SELECT pd.* FROM ProgramDoctori pd INNER JOIN Doctors d on pd.IDDoctor = d.ID where d.Specializare = '"+m_specializare+"' and pd.Data = '"+m_data+"'";
+    std::string string_cautare = "SELECT d.Nume, d.Prenume, d.CNP,  p.IntervalOrar FROM Doctors d LEFT JOIN Programari p ON d.ID = p.IDDoctor AND p.Data = '"+ m_data +"' WHERE d.Specializare = '"+ m_specializare +"'; ";
 
     std::vector<std::vector<std::wstring>> select_result =
         DataBase::getInstance().selectQuery2(
@@ -36,7 +36,7 @@ void RequestProgramare::manage_request()
 
     if (!m_to_send.empty())
     {
-        std::string buffer_final;
+        std::string buffer_final = "4$";
         auto it = m_to_send.begin();
         auto end = m_to_send.end();
         for (it; it != end - 1; ++it)
