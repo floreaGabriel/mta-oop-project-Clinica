@@ -2,15 +2,15 @@
 
 #include "RequestRegNormalUser.h"
 
-class RequestDoctorUser : public RequestRegNormalUser
+class RequestRegisterDoctorUser : public RequestRegNormalUser
 {
 public:
-	RequestDoctorUser() {
+	RequestRegisterDoctorUser() {
 		m_specializare = nullptr;
 	}
 
-	RequestDoctorUser(std::string);
-	~RequestDoctorUser() {}
+	RequestRegisterDoctorUser(std::string);
+	~RequestRegisterDoctorUser() {}
 
 	void manage_request() override;
 

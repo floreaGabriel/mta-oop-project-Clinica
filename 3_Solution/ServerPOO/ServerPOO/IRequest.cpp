@@ -1,12 +1,14 @@
 #include "IRequest.h"
 #include "CUtils.h"
 #include "RequestRegNormalUser.h"
-#include "RequestDoctorUser.h"
+#include "RequestRegisterDoctorUser.h"
 #include "RequestLoginNormalUser.h"
 #include "RequestLoginDoctor.h"
 #include "RequestProgramare.h"
 #include "RequestRegisterProgramare.h"
 #include "Exception.h"
+#include "RequestMedicamente.h"
+#include "RequestMedicamentPoza.h"
 
 IRequest* IRequest::Factory::requestSelector(std::string data)
 {
@@ -19,7 +21,7 @@ IRequest* IRequest::Factory::requestSelector(std::string data)
 		return new RequestRegNormalUser(data);
 	case 1:
 		// 1#username#nume#prenume#email#parola#telefon#CNP#specializare
-		return new RequestDoctorUser(data);
+		return new RequestRegisterDoctorUser(data);
 	case 2: 
 		// 2#useranme#parola
 		return new RequestLoginNormalUser(data);
@@ -37,6 +39,10 @@ IRequest* IRequest::Factory::requestSelector(std::string data)
 		//sau username ceva ca trebuie sa stie cine are programare atunci, imi spui cand te intorci
 		//mileanu :3
 		return new RequestRegisterProgramare(data);
+	case 6:
+		return new RequestMedicamente(data);
+	case 7:
+		return new RequestMedicamentPoza(data);
 	default:
 		throw Exception("Nu s-a putut selecta un Request din datele trimise de client!\n", 11);
 	}

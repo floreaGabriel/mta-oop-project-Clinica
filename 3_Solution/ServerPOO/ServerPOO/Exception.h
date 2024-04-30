@@ -20,3 +20,18 @@ private:
     int errorCode;
 };
 
+
+
+
+/*
+    ------------- log errori --------------
+
+    20 -> ServerConnection -> handleclient
+    21 /
+    22 /
+
+    11 -> IRequest -> Factory
+
+
+
+*/

@@ -28,6 +28,7 @@ public:
 	bool executeQuery(const wstring& query);
 	std::vector<std::wstring> selectQuery(const std::wstring& query);
 	std::vector<std::vector<std::wstring>> selectQuery2(const std::wstring& query);
+	std::vector<std::vector<std::wstring>> selectQuery3(const std::wstring& query);
 
 	SQLHANDLE getSTMT() { return sqlStmtHandle; }
 	SQLHANDLE getconn() { return sqlConnHandle; }

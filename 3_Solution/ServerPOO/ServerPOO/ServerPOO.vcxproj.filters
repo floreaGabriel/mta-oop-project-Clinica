@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\CPP Requesturi">
+      <UniqueIdentifier>{22c2ea09-3b17-4f36-830e-c0f9d5293637}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Requesturi">
+      <UniqueIdentifier>{83d0ea83-1719-4e34-bdfd-783439e6b02b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,31 +33,34 @@
     <ClCompile Include="DataBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IRequest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RequestRegNormalUser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="IRequest.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
-    <ClCompile Include="RequestDoctorUser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RequestLoginNormalUser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="RequestRegisterDoctorUser.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
     <ClCompile Include="RequestLoginDoctor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestLoginNormalUser.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
     <ClCompile Include="RequestProgramare.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Exception.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
     <ClCompile Include="RequestRegisterProgramare.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestRegNormalUser.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestMedicamente.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestMedicamentPoza.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,35 +74,49 @@
     <ClInclude Include="DataBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IRequest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestRegNormalUser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestDoctorUser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestLoginNormalUser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestLoginDoctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestProgramare.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Programare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exception.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RequestRegNormalUser.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
     <ClInclude Include="RequestRegisterProgramare.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestProgramare.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestLoginNormalUser.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestLoginDoctor.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestRegisterDoctorUser.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="IRequest.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestMedicamente.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestMedicamentPoza.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\aspirina.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\Omeprazol.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\..\..\..\ImagesPOO\algocalmin.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@ public:
 
 	void start(int port);
 	//int receive(char* receive, const int size) const;
+	void sendImages(int, char *);
 private:
 	int serverSocket;
 

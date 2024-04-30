@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\Microsoft SQL Server\Client SDK\ODBC\170\SDK\Lib\x64;C:\Program Files (x86)\Microsoft SQL Server\Client SDK\ODBC\170\SDK\Include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,13 +130,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Exception.cpp" />
     <ClCompile Include="RequestLoginDoctor.cpp" />
     <ClCompile Include="CUtils.cpp" />
     <ClCompile Include="IRequest.cpp" />
     <ClCompile Include="DataBase.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RequestDoctorUser.cpp" />
+    <ClCompile Include="RequestMedicamente.cpp" />
+    <ClCompile Include="RequestMedicamentPoza.cpp" />
+    <ClCompile Include="RequestRegisterDoctorUser.cpp" />
     <ClCompile Include="RequestLoginNormalUser.cpp" />
     <ClCompile Include="RequestProgramare.cpp" />
     <ClCompile Include="RequestRegisterProgramare.cpp" />
@@ -145,17 +147,23 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Exception.h" />
-    <ClInclude Include="Programare.h" />
     <ClInclude Include="RequestLoginDoctor.h" />
     <ClInclude Include="CUtils.h" />
     <ClInclude Include="IRequest.h" />
     <ClInclude Include="DataBase.h" />
-    <ClInclude Include="RequestDoctorUser.h" />
+    <ClInclude Include="RequestMedicamente.h" />
+    <ClInclude Include="RequestMedicamentPoza.h" />
+    <ClInclude Include="RequestRegisterDoctorUser.h" />
     <ClInclude Include="RequestLoginNormalUser.h" />
     <ClInclude Include="RequestProgramare.h" />
     <ClInclude Include="RequestRegisterProgramare.h" />
     <ClInclude Include="RequestRegNormalUser.h" />
     <ClInclude Include="ServerConnection.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\aspirina.png" />
+    <Image Include="..\..\..\..\..\ImagesPOO\algocalmin.jpg" />
+    <Image Include="..\..\..\..\..\Omeprazol.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

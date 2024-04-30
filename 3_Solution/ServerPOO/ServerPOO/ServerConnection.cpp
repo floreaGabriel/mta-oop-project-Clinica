@@ -1,4 +1,4 @@
-#include "ServerConnection.h"
+﻿#include "ServerConnection.h"
 #define _CRT_SECURE_NO_WARNINGS
 #define WIN32_LEAN_AND_MEAN
 
@@ -21,6 +21,9 @@
 #include <ws2tcpip.h>
 #include <stdio.h>
 #include <thread>
+#include <iomanip>
+#include <fstream>
+#include <sstream>
 
 
 
@@ -43,11 +46,77 @@ void ServerConnection::start(int port)
 	}
 }
 
-//int ServerConnection::receive(char* receive, const int size) const
-//{
-//	int receive_bytes = ::recv(serverSocket, receive, size, 0);
-//	return receive_bytes;
-//}
+
+
+
+void ServerConnection::sendImages(int clientSocket, char * answear)
+{
+	// 6$nume#pret#caleaImagine$nume#pret....
+	// 7#calea
+	std::vector<std::string> split = CUtils::understandData(answear, '#');
+
+	// parcurg fiecare cale pentru imagini
+		std::ifstream file(split[1], std::ios::binary);
+
+
+		if (file.is_open()) {
+			// Trimite datele către client
+			constexpr int bufferSize = 40960; // Dimensiunea buffer-ului pentru citirea din fișier
+			std::vector<uint8_t> buffer(bufferSize);
+
+			file.seekg(0, std::ios::end);
+
+			int fileSize = file.tellg();
+			std::string mesaj_dimensiune = "7#" + to_string(fileSize);
+			send(clientSocket, mesaj_dimensiune.c_str(), mesaj_dimensiune.length(), 0);
+
+			file.seekg(0, std::ios::beg);
+
+			int bytesRemained = fileSize;
+			int bytesSent = 0;
+			int bytesThatHasBeenSent = 0;
+			for (int i = 1; i <= (fileSize / 40960) + 1; i++)
+
+			{
+				char p[10];
+				int brec = recv(clientSocket, p, sizeof(p), 0);
+				p[brec] = '\0';
+				if (strcmp(p, "ACCEPT") == 0)
+				{
+
+					if (bytesRemained < 40960)
+					{
+						//fread(buffer, 1, bytesRemained, file);
+						file.read(reinterpret_cast<char*>(buffer.data()), bytesRemained);
+						bytesSent = send(clientSocket, reinterpret_cast<char*>(buffer.data()), bytesRemained, 0);
+						bytesThatHasBeenSent -= bytesSent;
+					}
+					else
+					{
+						file.read(reinterpret_cast<char*>(buffer.data()), 40960);
+						//fread(buffer, 1, 40960, file);
+						bytesSent = send(clientSocket, reinterpret_cast<char*>(buffer.data()), 40960, 0);
+						bytesThatHasBeenSent -= bytesSent;
+					}
+
+					bytesRemained -= 40960;
+					std::cout << bytesSent << std::endl;
+					
+
+				}
+
+			}
+			file.close();
+		}
+		else {
+			std::cerr << "Error: Unable to open file for reading." << std::endl;
+		}
+
+	
+
+	return;
+}
+
 
 bool ServerConnection::createSocket(int port) {
 
@@ -142,16 +211,18 @@ void ServerConnection::handleClient(int clientSocket) {
 				DataBase::getInstance().disconnect();
 
 				char* answear = request->manage_answear();
+				memset(buffer, 0, sizeof(buffer)); // resetez bufferul in care am primit mesajul
 
-				// resetez bufferul in care am primit datele initiale
-				memset(buffer, 0, sizeof(buffer));
-
-				send(clientSocket, answear, strlen(answear), 0);
-
-							
-
-				printf("Raspuns trimis catre client: %s!\n", answear);
-				//std::cout << "Received data from client: " << buffer << std::endl;
+				if (answear[0] == '7')
+				{
+					sendImages(clientSocket, answear);
+					printf("Imagine trimisa catre client cu cuscces!\n");
+				}
+				else
+				{
+					send(clientSocket, answear, strlen(answear), 0);
+					printf("Raspuns trimis catre client: %s!\n", answear);
+				}
 			}
 		}
 		catch (const Exception& e)
@@ -169,3 +240,6 @@ void ServerConnection::handleClient(int clientSocket) {
 	// Close client socket
 	closesocket(clientSocket);
 }
+
+
+

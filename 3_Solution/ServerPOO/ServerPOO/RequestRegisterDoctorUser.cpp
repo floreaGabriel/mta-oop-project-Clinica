@@ -1,13 +1,13 @@
-#include "RequestDoctorUser.h"
+#include "RequestRegisterDoctorUser.h"
 #include "CUtils.h"
 #include "DataBase.h"
 
-RequestDoctorUser::RequestDoctorUser(std::string data) : RequestRegNormalUser(data)
+RequestRegisterDoctorUser::RequestRegisterDoctorUser(std::string data) : RequestRegNormalUser(data)
 {
 	this->m_specializare = CUtils::understandData(data, '#')[8];
 }
 
-void RequestDoctorUser::manage_request()
+void RequestRegisterDoctorUser::manage_request()
 {
 	std::string string_cautare_dupa_username = "SELECT Nume FROM Doctors WHERE Username = '" + m_username + "'";
 
@@ -22,6 +22,7 @@ void RequestDoctorUser::manage_request()
 		memcpy(m_answear, "ALREADY EXISTS", 15);
 		return;
 	}
+
 
 	// Daca nu exista il inserez in baza de date
 	std::string query = "INSERT INTO Doctors (Username, Nume, Prenume, Email, Password, PhoneNumber, CNP, Specializare) VALUES ('" + this->m_username + "','" + this->m_nume + "','" + this->m_prenume + "','" + this->m_email
