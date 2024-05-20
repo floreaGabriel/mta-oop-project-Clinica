@@ -8,7 +8,10 @@
 #include "RequestRegisterProgramare.h"
 #include "Exception.h"
 #include "RequestMedicamente.h"
-#include "RequestMedicamentPoza.h"
+#include "RequestMedicamentDupaNume.h"
+#include "RequestModificareParola.h"
+#include "RequestVizualizareProgramari.h"
+#include "RequestAfectiuni.h"
 
 IRequest* IRequest::Factory::requestSelector(std::string data)
 {
@@ -42,7 +45,17 @@ IRequest* IRequest::Factory::requestSelector(std::string data)
 	case 6:
 		return new RequestMedicamente(data);
 	case 7:
-		return new RequestMedicamentPoza(data);
+		return new RequestMedicamentDupaNume(data);
+	case 8:
+		return new RequestMedicamentDupaNume(data);
+	case 9:
+		return new RequestModificareParola(data);
+	case 10:
+		return new RequestVizualizareProgramari(data);
+	case 11:
+		return new RequestVizualizareProgramari(data);
+	case 12:
+		return new RequestAfectiuni(data);
 	default:
 		throw Exception("Nu s-a putut selecta un Request din datele trimise de client!\n", 11);
 	}

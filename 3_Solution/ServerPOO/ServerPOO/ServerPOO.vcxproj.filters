@@ -60,8 +60,17 @@
     <ClCompile Include="RequestMedicamente.cpp">
       <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
-    <ClCompile Include="RequestMedicamentPoza.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="RequestMedicamentDupaNume.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestModificareParola.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestAfectiuni.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestVizualizareProgramari.cpp">
+      <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,8 +113,17 @@
     <ClInclude Include="RequestMedicamente.h">
       <Filter>Header Files\Requesturi</Filter>
     </ClInclude>
-    <ClInclude Include="RequestMedicamentPoza.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="RequestMedicamentDupaNume.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestModificareParola.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestAfectiuni.h">
+      <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestVizualizareProgramari.h">
+      <Filter>Header Files\Requesturi</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

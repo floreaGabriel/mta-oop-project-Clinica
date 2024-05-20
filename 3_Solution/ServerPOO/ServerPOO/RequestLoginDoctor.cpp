@@ -23,8 +23,24 @@ void RequestLoginDoctor::manage_request()
 	{
 		std::string result(select_result[0].begin(), select_result[0].end());
 		cout << "User exists!\n" << result << " s-a logat!\n";
-		m_answear = (char*)malloc(15 * sizeof(char));
-		memcpy(m_answear, "OK", 15);
+
+		std::string buffer_final = "3#";
+		std::string preluare_date_pacient = "SELECT * FROM Doctors WHERE Username = '" + m_username + "'";
+		std::vector<std::vector<std::wstring>> preluare_result = DataBase::getInstance().selectQuery2(std::wstring(preluare_date_pacient.begin(), preluare_date_pacient.end()));
+
+		for (auto it : preluare_result)
+		{
+			int i = 0;
+			for (auto col = it.begin(); col != it.end(); ++col)
+			{
+				if (i == 0) { i++; continue; }
+				buffer_final += std::string((*col).begin(), (*col).end());
+				buffer_final += "#";
+			}
+		}
+
+		m_answear = (char*)malloc(((buffer_final.size() + 1) * sizeof(char)));
+		memcpy(m_answear, buffer_final.c_str(), buffer_final.size() + 1);
 		return;
 	}
 	else

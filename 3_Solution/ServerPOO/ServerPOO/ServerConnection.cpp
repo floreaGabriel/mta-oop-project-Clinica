@@ -176,6 +176,15 @@ void ServerConnection::handleClient(int clientSocket) {
 	// Handle client request
 	char buffer[1024];
 
+	if (DataBase::getInstance().connect())
+	{
+		printf("Conectat la baza de date!\n");
+	}
+	else
+	{
+		throw Exception("Nu se poate conecta la baza de date!\n", 22);
+	}
+
 	while (true)
 	{
 		try {
@@ -196,19 +205,11 @@ void ServerConnection::handleClient(int clientSocket) {
 
 
 
-				if (DataBase::getInstance().connect())
-				{
-					printf("Conectat la baza de date!\n");
-				}
-				else
-				{
-					throw Exception("Nu se poate conecta la baza de date!\n", 22);
-				}
+				
 
 				IRequest* request = IRequest::Factory::requestSelector(buffer);
 				request->manage_request();
 
-				DataBase::getInstance().disconnect();
 
 				char* answear = request->manage_answear();
 				memset(buffer, 0, sizeof(buffer)); // resetez bufferul in care am primit mesajul
@@ -221,7 +222,7 @@ void ServerConnection::handleClient(int clientSocket) {
 				else
 				{
 					send(clientSocket, answear, strlen(answear), 0);
-					printf("Raspuns trimis catre client: %s!\n", answear);
+					printf("Raspuns trimis catre client:  %s!\n", answear);
 				}
 			}
 		}
@@ -236,6 +237,8 @@ void ServerConnection::handleClient(int clientSocket) {
 		
 	}
 	
+	DataBase::getInstance().disconnect();
+
 
 	// Close client socket
 	closesocket(clientSocket);

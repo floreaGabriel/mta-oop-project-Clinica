@@ -14,7 +14,7 @@ RequestMedicamente::RequestMedicamente(std::string data)
 void RequestMedicamente::manage_request()
 {
 
-	std::string string_cautare = "select NumeMedicament, Pret from Medicamente where IDMedicament between "+ std::to_string(m_nrPagina) + " and " + std::to_string(m_nrPagina * 6) + ";";
+	std::string string_cautare = "select NumeMedicament, Pret from Medicamente where IDMedicament between "+ std::to_string(m_nrPagina * 6 + 1) + " and " + std::to_string(m_nrPagina * 6 + 6) + ";";
 
 	std::vector<std::vector<std::wstring>> preluare_result = DataBase::getInstance().selectQuery3(std::wstring(string_cautare.begin(), string_cautare.end()));
 	
