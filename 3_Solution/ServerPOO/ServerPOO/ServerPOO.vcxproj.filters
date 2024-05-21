@@ -72,6 +72,9 @@
     <ClCompile Include="RequestVizualizareProgramari.cpp">
       <Filter>Source Files\CPP Requesturi</Filter>
     </ClCompile>
+    <ClCompile Include="RequestUpdateProgramare.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ServerConnection.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="RequestVizualizareProgramari.h">
       <Filter>Header Files\Requesturi</Filter>
+    </ClInclude>
+    <ClInclude Include="RequestUpdateProgramare.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

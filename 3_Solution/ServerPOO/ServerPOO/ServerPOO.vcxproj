@@ -144,6 +144,7 @@
     <ClCompile Include="RequestProgramare.cpp" />
     <ClCompile Include="RequestRegisterProgramare.cpp" />
     <ClCompile Include="RequestRegNormalUser.cpp" />
+    <ClCompile Include="RequestUpdateProgramare.cpp" />
     <ClCompile Include="RequestVizualizareProgramari.cpp" />
     <ClCompile Include="ServerConnection.cpp" />
   </ItemGroup>
@@ -163,6 +164,7 @@
     <ClInclude Include="RequestProgramare.h" />
     <ClInclude Include="RequestRegisterProgramare.h" />
     <ClInclude Include="RequestRegNormalUser.h" />
+    <ClInclude Include="RequestUpdateProgramare.h" />
     <ClInclude Include="RequestVizualizareProgramari.h" />
     <ClInclude Include="ServerConnection.h" />
   </ItemGroup>

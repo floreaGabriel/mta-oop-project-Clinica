@@ -12,6 +12,7 @@
 #include "RequestModificareParola.h"
 #include "RequestVizualizareProgramari.h"
 #include "RequestAfectiuni.h"
+#include "RequestUpdateProgramare.h"
 
 IRequest* IRequest::Factory::requestSelector(std::string data)
 {
@@ -56,6 +57,10 @@ IRequest* IRequest::Factory::requestSelector(std::string data)
 		return new RequestVizualizareProgramari(data);
 	case 12:
 		return new RequestAfectiuni(data);
+	case 13: 
+		return new RequestModificareParola(data);
+	case 14: 
+		return new RequestUpdateProgramare(data);
 	default:
 		throw Exception("Nu s-a putut selecta un Request din datele trimise de client!\n", 11);
 	}

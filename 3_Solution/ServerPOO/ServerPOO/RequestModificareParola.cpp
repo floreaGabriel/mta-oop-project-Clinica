@@ -8,27 +8,51 @@ RequestModificareParola::RequestModificareParola(std::string data)
 {
 	std::vector<std::string> splitted_data = CUtils::understandData(data, '#');
 
+	m_tip = splitted_data[0];
 	m_username = splitted_data[1];
 	m_parolaNoua = splitted_data[2];
 }
 
 void RequestModificareParola::manage_request()
 {
-	std::string query = " UPDATE NormalUsers SET Password = '" + m_parolaNoua + "' WHERE Username = '" + m_username + "';";
 
-	std::wstring wquery(query.begin(), query.end());
-
-	bool flag = DataBase::getInstance().executeQuery(wquery);
-
-    if (flag) {
-		m_answear = (char*)malloc(3 * sizeof(char));
-		memcpy(m_answear, "OK", 3);
-    }
-	else
+	if (m_tip == "9")
 	{
-		m_answear = (char*)malloc(4 * sizeof(char));
-		memcpy(m_answear, "NOK", 4);
+		std::string query = " UPDATE NormalUsers SET Password = '" + m_parolaNoua + "' WHERE Username = '" + m_username + "';";
+
+		std::wstring wquery(query.begin(), query.end());
+
+		bool flag = DataBase::getInstance().executeQuery(wquery);
+
+		if (flag) {
+			m_answear = (char*)malloc(3 * sizeof(char));
+			memcpy(m_answear, "OK", 3);
+		}
+		else
+		{
+			m_answear = (char*)malloc(4 * sizeof(char));
+			memcpy(m_answear, "NOK", 4);
+		}
 	}
+	else if (m_tip == "13")
+	{
+		std::string query = " UPDATE Doctors SET Password = '" + m_parolaNoua + "' WHERE Username = '" + m_username + "';";
+
+		std::wstring wquery(query.begin(), query.end());
+
+		bool flag = DataBase::getInstance().executeQuery(wquery);
+
+		if (flag) {
+			m_answear = (char*)malloc(3 * sizeof(char));
+			memcpy(m_answear, "OK", 3);
+		}
+		else
+		{
+			m_answear = (char*)malloc(4 * sizeof(char));
+			memcpy(m_answear, "NOK", 4);
+		}
+	}
+	
 
 	return;
 
