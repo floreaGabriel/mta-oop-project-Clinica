@@ -13,8 +13,8 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-{ //25.20.193.54
-    if (ClientConnection::getInstance().connectToServer("25.20.193.54",12345))
+{ //25.20.193.54        172.20.10.8
+    if (ClientConnection::getInstance().connectToServer("127.0.0.1",12345))
     {
     ui->setupUi(this);
     QPixmap pix("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/sigla-transparenta.png");

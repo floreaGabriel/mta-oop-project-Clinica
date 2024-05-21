@@ -19,15 +19,8 @@ dashBoard::dashBoard(QWidget *parent,IUser* usser)
     QPixmap pixafectiuni("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/screenafectiuni.png");
     ui->lblpageHomePoza_Afectiuni->setPixmap(pixafectiuni.scaled(300,300,Qt::KeepAspectRatio));
 
-    // QPalette palette;
-    // palette.setBrush(backgroundRole(),QBrush(QImage("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/background.png").scaled(size())));
-    // setPalette(palette);
-
 
     this->ui->StackedWidgetAplicatie->setCurrentWidget(this->ui->pageHome);
-
-
-
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(myFunction_timer()));
@@ -45,10 +38,16 @@ dashBoard::dashBoard(QWidget *parent,IUser* usser)
     ui->comboSpecializare->addItem("Psihiatru");
     ui->comboSpecializare->addItem("Ginecolog");
 
-
     ui->comboMotiv->addItem("Consultatie initiala.");
     ui->comboMotiv->addItem("Consultatie de control.");
     ui->comboMotiv->addItem("Consultatie de control + Eliberare reteta.");
+
+
+    if(this->client_pacient == dynamic_cast<Doctor*>(client_pacient))
+    {
+        //este un doctor
+        removeButtonAndResize(this->ui->btnSchedule);
+    }
 
     setFixedSize(size());
 }
@@ -58,9 +57,36 @@ dashBoard::~dashBoard()
     delete ui;
 }
 
+
+void dashBoard::removeButtonAndResize(QPushButton* buttonToRemove)
+{
+    QHBoxLayout* layout = qobject_cast<QHBoxLayout*>(ui->horizontalLayout);
+
+    if (!layout) {
+        qWarning("Layout not found!");
+        return;
+    }
+
+    // Remove the button from the layout
+    layout->removeWidget(buttonToRemove);
+    buttonToRemove->setParent(nullptr);
+    buttonToRemove->hide();
+
+    int remainingButtons = layout->count();
+    int newWidth = 1000 / remainingButtons;
+
+    for (int i = 0; i < remainingButtons; ++i) {
+        QWidget* widget = layout->itemAt(i)->widget();
+        if (QPushButton* button = qobject_cast<QPushButton*>(widget)) {
+            button->setFixedSize(newWidth, 50);
+        }
+    }
+}
+
+
 void delayFunction() {
     qDebug() << "Începe întârzierea...";
-    QThread::msleep(3000); // Așteaptă 2 secunde (2000 milisecunde)
+    QThread::msleep(3000);
     qDebug() << "Sfârșitul întârzierii.";
 }
 
@@ -176,7 +202,7 @@ QString convert_nulls_to_interval(int nr)
     case 15:
         return "17:30-18:00";
     default:
-        return ""; // Tratează cazul în care nr nu se potrivește cu niciunul dintre cazurile de mai sus
+        return "";
     }
 }
 
@@ -216,8 +242,9 @@ int convert_hour_to_pozition(std::string hour)
     if(hour=="17:30-18:00")
         return 15;
 
-    // Tratează cazul în care nr nu se potrivește cu niciunul dintre cazurile de mai sus
+    return 1001;
 
+    // Tratează cazul în care nr nu se potrivește cu niciunul dintre cazurile de mai sus
 }
 
 
@@ -225,9 +252,9 @@ bool dashBoard::exista_doctor_in_vector(std::string nume,std::string prenume,std
 {
     for (size_t i = 0; i < disp_prog_vect.size(); ++i) {
         Disponibilitate_Programari* ptr = disp_prog_vect[i];
-
         if(ptr->getNume()==nume && ptr->getPrenume()==prenume && ptr->getCNP()==CNP)
             return true;
+        //free(ptr);
     }
     return false;
 }
@@ -243,6 +270,7 @@ void dashBoard::modify_hour_doctor(std::string nume,std::string prenume,std::str
             ptr->setIntervalOcupat(convert_hour_to_pozition(hour));
             return;
         }
+        //free(ptr);
     }
 }
 
@@ -325,8 +353,7 @@ void dashBoard::ButtonOraProgramareClicked()
             qDebug() << "Message sent: " << buffer;
             // insertCreds()
         }
-
-        //delayFunction();
+        //free(buffer);
 
         char responseBuffer[1024];
         if(ClientConnection::getInstance().receiveData(responseBuffer, sizeof(responseBuffer)))
@@ -564,11 +591,22 @@ void dashBoard::ButtonInformatiiMedicament(const std::string& numeMedicament)
         int NrOfBytes = 0;
         uint8_t* poza=primire_poza(NrOfBytes);
 
+        QPixmap buttonIcon = QPixmap("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/add-shop.png").scaled(this->ui->btnAddShopMedicament->size(), Qt::KeepAspectRatio);
+        this->ui->btnAddShopMedicament->setIcon(buttonIcon);
+        this->ui->btnAddShopMedicament->setIconSize(buttonIcon.size());
+
 
         QImage image;
         image.loadFromData(poza, NrOfBytes);
         QPixmap pix = QPixmap::fromImage(image);
         ui->pozaMedicament->setPixmap(pix.scaled(450,300,Qt::KeepAspectRatio));
+
+        Medicament_shop* medicament_shop = findMedicamentByName(numeMedicament);
+        if (medicament_shop == nullptr)
+        {
+            medicament_shop = new Medicament_shop(numeMedicament,splitted_response[4],pix);
+        }
+        connect(this->ui->btnAddShopMedicament, &QPushButton::clicked, this, std::bind(&dashBoard::ButtonAddCosMedicament, this, medicament_shop));
     }
 
 
@@ -581,12 +619,23 @@ void dashBoard::ButtonInformatiiMedicament(const std::string& numeMedicament)
 }
 
 
-void dashBoard::ButtonAddCosMedicament(const std::string& numeMedicament)
+void dashBoard::ButtonAddCosMedicament(Medicament_shop* medicament)
 {
-    this->CosCumparaturi[numeMedicament]++;
+    this->CosCumparaturi[medicament]++;
+    qDebug() << this->CosCumparaturi[medicament]<<"\n";
 }
 
 
+Medicament_shop* dashBoard::findMedicamentByName(const std::string& name)
+{
+    for (const auto& pair : this->CosCumparaturi) {
+        Medicament_shop* medicament = pair.first;
+        if (medicament->returnNume() == name) {
+            return medicament;
+        }
+    }
+    return nullptr; // Returnează nullptr dacă medicamentul nu este găsit
+}
 
 void dashBoard::Actualizare_shop(){
     char pagina[3];
@@ -697,7 +746,13 @@ void dashBoard::Actualizare_shop(){
                     QPixmap buttonIcon = QPixmap("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/add-shop.png").scaled(button->size(), Qt::KeepAspectRatio);
                     button->setIcon(buttonIcon);
                     button->setIconSize(buttonIcon.size());
-                    connect(button, &QPushButton::clicked, this, std::bind(&dashBoard::ButtonAddCosMedicament, this, numeMedicament));
+
+                    Medicament_shop* medicament_shop = findMedicamentByName(numeMedicament);
+                    if (medicament_shop == nullptr)
+                    {
+                        medicament_shop = new Medicament_shop(numeMedicament,pretMedicament,pix);
+                    }
+                    connect(button, &QPushButton::clicked, this, std::bind(&dashBoard::ButtonAddCosMedicament, this, medicament_shop));
 
 
                     horizontalLayout->addWidget(button, 0, Qt::AlignBottom | Qt::AlignRight); // Adaugă butonul în layout-ul orizontal
@@ -788,7 +843,9 @@ void dashBoard::on_btnAccountDateCont_clicked()
     this->ui->lblaccountUsername->setText(QString::fromStdString(this->client_pacient->getUsername()));
     this->ui->lblaccountParola->setText(QString::fromStdString(this->client_pacient->getParola()));
 
-    if(this->client_pacient = dynamic_cast<Pacient*>(client_pacient))
+    this->ui->lblaccountspecializareDoctor->setText(QString::fromStdString(this->client_pacient->getSpecializare()));
+
+    if(this->client_pacient == dynamic_cast<Pacient*>(client_pacient))
     {
         //este un pacient
         this->ui->lblaccountPacientdoctor->setText("Pacient");
@@ -796,7 +853,7 @@ void dashBoard::on_btnAccountDateCont_clicked()
     } else
     {
         this->ui->lblaccountPacientdoctor->setText("Doctor");
-        this->ui->lblaccountspecializareDoctor->setText(QString::fromStdString(this->client_pacient->getSpecializare()));
+        //this->ui->lblaccountspecializareDoctor->setText(QString::fromStdString(this->client_pacient->getSpecializare()));
         this->ui->lblaccountspecializareDoctor->show();
     }
 
@@ -902,6 +959,10 @@ void dashBoard::on_btnAccountSchimbaParola_2_clicked()
     {
         this->ui->labelEroareSchimbareParola->setText("Parolele noi nu coincid.");
         this->ui->labelEroareSchimbareParola->show();
+    } else if(this->ui->lineEditParolaNoua1->text().isEmpty() || this->ui->lineEditParolaNoua2->text().isEmpty())
+    {
+        this->ui->labelEroareSchimbareParola->setText("Casetele pentru parolele noi sunt goale.");
+        this->ui->labelEroareSchimbareParola->show();
     }
     else {
         QByteArray byteParolaNoua = this->ui->lineEditParolaNoua1->text().toUtf8();
@@ -912,7 +973,15 @@ void dashBoard::on_btnAccountSchimbaParola_2_clicked()
 
         char* buffer= (char*)malloc(5+sizeof(dataParolaNoua)+
                                        sizeof(dataUsername));
-        strcpy(buffer,"9#");
+        if(this->client_pacient = dynamic_cast<Pacient*>(client_pacient))
+        {
+            //este un pacient
+            strcpy(buffer,"9#");
+        } else
+        {
+            //este un doctor
+            strcpy(buffer,"13#");
+        }
         strcat(buffer,dataUsername);
         strcat(buffer,"#");
         strcat(buffer,dataParolaNoua);
@@ -931,7 +1000,7 @@ void dashBoard::on_btnAccountSchimbaParola_2_clicked()
             if (strcmp(responseBuffer, "OK") == 0) {
                 // Handle successful response from server
                 qDebug() << "ok\n";
-
+                this->client_pacient->setParola(this->ui->lineEditParolaNoua1->text().toStdString());
             }
             else if (strcmp(responseBuffer, "NOK") == 0) {
                 // Handle error response from server
@@ -962,25 +1031,54 @@ void dashBoard::on_btnAccountLogOut_clicked()
 //Vezi programari din Account
 
 
-void dashBoard::ButtonBifeazaProgramareClicked() {
+void dashBoard::ButtonBifeazaProgramareClicked(QString tableIDProgramare) {
+    //qDebug() <<"s-a apasat butonul de: "<<this->client_pacient->getNume()<<"\n";
     QPushButton *button = qobject_cast<QPushButton*>(sender());
     if (button) {
         // Verifică dacă este un Doctor
         if (dynamic_cast<Doctor*>(client_pacient)) {
-            // Este un Doctor, deci modificăm pixmap-ul butonului doar dacă este stocat "bifa_goala.jpg"
-            QPixmap buttonIcon;
-                // Dacă este stocat "bifa_goala.jpg", atunci setăm pictograma la "bifa_plina.jpg"
-                buttonIcon = QPixmap("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/bifa_plina.jpg");
-                button->setIcon(buttonIcon);
-                button->setIconSize(buttonIcon.size());
+            button->setStyleSheet("background-color: green; color: white; border: none;");
+
+
+            QByteArray byteIDProgramare = tableIDProgramare.toUtf8();
+            const char* dataIDProgramare = byteIDProgramare.constData();
+
+            char* buffer = (char*)malloc(sizeof(dataIDProgramare)+4);
+
+
+            strcpy(buffer,"14#");
+            strcat(buffer,dataIDProgramare);
+
+            if (ClientConnection::getInstance().sendData(buffer)) {
+                // Message sent successfully
+                qDebug() << "Message sent: " << buffer;
+                // insertCreds()
+            }
+
+            char responseBuffer[4096];
+            if(ClientConnection::getInstance().receiveData(responseBuffer, sizeof(responseBuffer)))
+            {
+                qDebug() << "Mesaj primit: " << responseBuffer;
+                if (strcmp(responseBuffer, "OK") == 0)
+                {
+                    qDebug() << "Am primit ok\n";
+                }
+                else{
+                    // Handle error response from server
+                    qDebug() << "NOK\n";
+                }
+            } else {
+                // Handle receive error
+                qDebug() <<" eroare la primire mesaj ButtonBifeazaProgramareClicked.";
+            }
         }
     }
 }
 
 void dashBoard::setupTableColumnsWidth(){
-    QString imagePath = "C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/background.png";
-    QString styleSheet = QString("background-image: url(%1); background-repeat: no-repeat; background-position: center;").arg(imagePath);
-    ui->pageVeziProgramari->setStyleSheet(styleSheet);
+    //QString imagePath = "C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/background.png";
+    //QString styleSheet = QString("background-image: url(%1); background-repeat: no-repeat; background-position: center;").arg(imagePath);
+    //ui->pageVeziProgramari->setStyleSheet(styleSheet);
 
     ui->tableWidget->setColumnWidth(0,150);
     ui->tableWidget->setColumnWidth(1,65);
@@ -1002,7 +1100,7 @@ void dashBoard::on_btnAccountVeziProgramari_clicked()
 
     char* buffer = (char*)malloc(sizeof(dataUsername)+3);
 
-    if(this->client_pacient = dynamic_cast<Pacient*>(client_pacient))
+    if(this->client_pacient == dynamic_cast<Pacient*>(client_pacient))
     {
         //este un pacient
         strcpy(buffer,"10#");
@@ -1048,15 +1146,15 @@ void dashBoard::on_btnAccountVeziProgramari_clicked()
                     QString tableMotiv = QString::fromStdString(splitted_programare[4]);
 
                     QPushButton* buttonFinalizat = new QPushButton();
-                    buttonFinalizat->setFixedSize(20, 20); // Setează dimensiunea butonului
-                    QPixmap buttonIcon;
-                    if(splitted_programare[5]=="NULL")
-                        buttonIcon = QPixmap("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/bifa_goala.jpg").scaled(buttonFinalizat->size(), Qt::KeepAspectRatio);
+                    buttonFinalizat->setFixedSize(90, 28); // Setează dimensiunea butonului
+                    //QPixmap buttonIcon;
+                    if(splitted_programare[5]=="nu")
+                        buttonFinalizat->setStyleSheet("background-color: red; color: white; border: none;");
                     else
-                        buttonIcon = QPixmap("C:/Users/alexm/Desktop/poo proiect/oop proiect clinica/poze/bifa_plina.jpg").scaled(buttonFinalizat->size(), Qt::KeepAspectRatio);
-                    buttonFinalizat->setIcon(buttonIcon);
-                    buttonFinalizat->setIconSize(buttonIcon.size());
-                    connect(buttonFinalizat, &QPushButton::clicked, this, &dashBoard::ButtonBifeazaProgramareClicked);
+                        buttonFinalizat->setStyleSheet("background-color: green; color: white; border: none;");
+                    // buttonFinalizat->setIcon(buttonIcon);
+                    // buttonFinalizat->setIconSize(buttonIcon.size());
+                    connect(buttonFinalizat, &QPushButton::clicked, this, std::bind(&dashBoard::ButtonBifeazaProgramareClicked,this,tableIDProgramare));
 
 
                     ui->tableWidget->setItem(row_tabela,0,new QTableWidgetItem(tableIDProgramare));
@@ -1314,6 +1412,134 @@ void dashBoard::on_btnMedicamentRecomandatAfectiune_clicked()
     this->ui->StackedWidgetAplicatie->setCurrentWidget(ui->pageShop);
     this->ui->StackedWidgetMedicamente->setCurrentWidget(ui->pageMedicament);
 }
+
+
+
+//-----------------------------------------------------------------------------------------
+//COS CUMPARATURI
+
+
+void dashBoard::reset_layout_vezi_cos_cumparaturi() {
+    // Verifică dacă widget-ul pageProgramari are un layout setat
+    QLayout *layout = ui->scrollAreaCosCumparaturi->layout();
+    if (layout) {
+        // Șterge toate widget-urile din layout-ul actual al pageProgramari
+        QLayoutItem* child;
+        while ((child = layout->takeAt(0)) != nullptr) {
+            // Șterge widget-ul din layout
+            delete child->widget();
+            // Șterge item-ul din layout
+            delete child;
+        }
+        // Eliberează memoria ocupată de layout
+        delete layout;
+        // Setează layout-ul pageProgramari la nullptr pentru a evita referințele nule
+        ui->scrollAreaCosCumparaturi->setLayout(nullptr);
+    }
+}
+
+
+void dashBoard::on_btnAccountCosCumparaturi_clicked()
+{
+    reset_layout_vezi_cos_cumparaturi();
+
+    QGridLayout* mainLayout = new QGridLayout(ui->scrollAreaCosCumparaturi);
+    mainLayout->setSpacing(5); // Setează spațiul între widget-uri în layout
+    int row = 0;
+    int col = 0;
+
+    //parcurg tot cosul de cumparaturi
+    for (const auto& pair : this->CosCumparaturi) {
+        Medicament_shop* medicament = pair.first;
+        int cantitate = pair.second;
+
+        // Creează un chenar pentru fiecare medicament
+        QFrame* frame = new QFrame();
+        frame->setFixedSize(300, 300);
+        frame->setStyleSheet("background-color: #f0f0f0; color: black; border: 2px solid #ccc; border-radius: 5px;");
+
+        // Creează un layout pentru chenar
+        QVBoxLayout* frameLayout = new QVBoxLayout(frame);
+
+        // QLabel* labelPoza= medicament->returnPoza();
+        // frameLayout->addWidget(labelPoza);
+        QLabel* labelPoza = new QLabel();
+        labelPoza->setPixmap(medicament->returnPoza());
+        labelPoza->setPixmap(medicament->returnPoza().scaled(300,300));
+        frameLayout->addWidget(labelPoza);
+
+        // Adaugă numele medicamentului în partea de sus a chenarului
+        QLabel* numeMedicament = new QLabel(QString::fromStdString(medicament->returnNume()));
+        numeMedicament->setAlignment(Qt::AlignCenter);
+        numeMedicament->setFont(QFont("Arial", 14, QFont::Bold));
+        frameLayout->addWidget(numeMedicament);
+
+        // Creează un layout orizontal pentru preț și cantitate
+        QHBoxLayout* priceQuantityLayout = new QHBoxLayout();
+
+        QLabel* pretMedicament = new QLabel(QString::fromStdString(medicament->getPret()));
+        pretMedicament->setAlignment(Qt::AlignLeft);
+        pretMedicament->setFont(QFont("Arial", 14, QFont::Bold));
+        priceQuantityLayout->addWidget(pretMedicament);
+
+        QLabel* cantitateMedicament = new QLabel(QString::number(cantitate));
+        cantitateMedicament->setAlignment(Qt::AlignRight);
+        cantitateMedicament->setFont(QFont("Arial", 14, QFont::Bold));
+        priceQuantityLayout->addWidget(cantitateMedicament);
+
+        frameLayout->addLayout(priceQuantityLayout);
+
+
+        QHBoxLayout* total = new QHBoxLayout();
+
+        float pret_total=0;
+        float pret_bucata = std::stof(medicament->getPret());
+        pret_total = pret_bucata * cantitate;
+        QLabel* pret_medicamente = new QLabel(QString::number(pret_total));
+        pret_medicamente->setAlignment(Qt::AlignCenter);
+        pret_medicamente->setFont(QFont("Arial", 30, QFont::Bold));
+
+
+        float pret_cos;
+        if(this->ui->lblPretCos->text() == "")
+        {
+            pret_cos=0;
+        } else
+            pret_cos = (this->ui->lblPretCos->text()).toFloat();
+        pret_cos += pret_total;
+        this->ui->lblPretCos->setText(QString::number(pret_cos));
+
+        total->addWidget(pret_medicamente);
+
+        frameLayout->addLayout(total);
+
+        // Adaugă chenarul în layout-ul principal
+        mainLayout->addWidget(frame, row, col);
+
+        col++;
+        if (col == 3) {
+            col = 0;
+            row++;
+        }
+    }
+    ui->scrollAreaCosCumparaturi->setLayout(mainLayout);
+
+
+    this->ui->StackedWidgetAplicatie->currentWidget()->close();
+    this->ui->StackedWidgetAplicatie->setCurrentWidget(ui->pageVeziCosCumparaturi);
+    this->ui->pageVeziCosCumparaturi->show();
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -97,6 +97,7 @@ void Login::on_pushButton_2_clicked()
             this->mainWindow->hide();
             this->close();
             dashBoard* dashBoardWindow = new dashBoard(this,user);
+            dashBoardWindow->setBackWindow(mainWindow);
             dashBoardWindow->show();
         }
         else if (strcmp(responseBuffer, "NOK") == 0) {

@@ -33,11 +33,10 @@ void RequestLogin::requestSEND(){
     strcat(buff,dataPass);
 
 
-
-
     if (ClientConnection::getInstance().sendData(buff)) {
         // Message sent successfully
         qDebug() << "Message sent: " << buff;
         // insertCreds()
     }
+    free(buff);
 }

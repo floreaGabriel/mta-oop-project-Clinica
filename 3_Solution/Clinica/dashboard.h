@@ -19,6 +19,7 @@
 #include"exception.h"
 #include"afectiune.h"
 
+#include"medicament_shop.h"
 
 namespace Ui {
 class dashBoard;
@@ -46,7 +47,7 @@ private slots:
 
     void handleInfoButtonClicked();
 
-    void ButtonBifeazaProgramareClicked();
+    void ButtonBifeazaProgramareClicked(QString tableIDProgramare);
 
     void on_btnHome_clicked();
 
@@ -66,11 +67,13 @@ private slots:
 
     void reset_layout_afectiuni();
 
+    void reset_layout_vezi_cos_cumparaturi();
+
     void ButtonOraProgramareClicked();
 
     void ButtonInformatiiMedicament(const std::string& numeMedicament);
 
-    void ButtonAddCosMedicament(const std::string& numeMedicament);
+    void ButtonAddCosMedicament(Medicament_shop* medicament);
 
     void on_btnBack_clicked();
 
@@ -106,12 +109,15 @@ private slots:
 
     void on_btnAccountLogOut_clicked();
 
+    void on_btnAccountCosCumparaturi_clicked();
+
 private:
     Ui::dashBoard *ui;
     MainWindow* mainWindow = nullptr;
 
     IUser* client_pacient;
-    std::map<std::string,int> CosCumparaturi;
+    std::map<Medicament_shop*,int> CosCumparaturi;
+
     std::vector<Disponibilitate_Programari*> disp_prog_vect;
     int previous_page;
 
@@ -119,6 +125,9 @@ private:
 
     bool exista_doctor_in_vector(std::string nume,std::string prenume,std::string CNP);
     void modify_hour_doctor(std::string nume,std::string prenume,std::string CNP,std::string hour);
+
+    void removeButtonAndResize(QPushButton* buttonToRemove);
+    Medicament_shop* findMedicamentByName(const std::string& name);
 
     int pagina_shop;
 

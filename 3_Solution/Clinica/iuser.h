@@ -14,7 +14,7 @@ private:
 
 public:
     IUser();
-
+    virtual void setParola(std::string parola_noua) =0;
     virtual std::string getUsername() =0;
     virtual  std::string getNume() =0;
     virtual std::string getPrenume() =0;

@@ -253,9 +253,11 @@ void Register::on_pushButton_2_clicked()
     }
     else
     {
+        //qDebug()<<ui->comboSpecializare->currentText()<<"\n";
         IRequest* req = new RequestRegister(ui->cstUsername->text(),ui->cstPassword1->text(),ui->cstPassword2->text(),ui->cstFirstName->text(),ui->cstLastName->text(),
                                             ui->cstPhoneNumber->text(),ui->cstEmail->text(),ui->cstCNP->text(),this->ui->radDoctor->isChecked(),ui->comboSpecializare->currentText());
         req->requestSEND();
+        //qDebug()<<ui->comboSpecializare->currentText()<<"\n";
         delete req;
 
 

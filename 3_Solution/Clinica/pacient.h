@@ -24,7 +24,7 @@ public:
     Pacient(std::string cpy_username,std::string cpy_nume,std::string cpy_prenume,
             std::string cpy_email, std::string cpy_parola,
             std::string cpy_phoneNumber,std::string cpy_CNP);
-
+    void setParola(std::string parola_noua) override { this->parola=parola_noua;}
     std::string getUsername() override { return this->username;};
     std::string getNume() override { return this->nume;};
     std::string getPrenume() override { return this->prenume;};

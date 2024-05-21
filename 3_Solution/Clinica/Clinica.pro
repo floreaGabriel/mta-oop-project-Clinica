@@ -25,6 +25,7 @@ SOURCES += \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
+    medicament_shop.cpp \
     pacient.cpp \
     register.cpp \
     requestlogin.cpp \
@@ -42,6 +43,7 @@ HEADERS += \
     iuser.h \
     login.h \
     mainwindow.h \
+    medicament_shop.h \
     pacient.h \
     register.h \
     requestlogin.h \

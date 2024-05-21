@@ -15,6 +15,7 @@ RequestRegister::RequestRegister(QString cuser, QString cpass1, QString cpass2, 
 
 void RequestRegister::requestSEND()
 {
+    //qDebug()<<"specializare1: "<<this->specializare<<"\n";
     QByteArray byteUser = user.toUtf8();
     QByteArray bytePass = pass1.toUtf8();
     QByteArray byteFirstName = FirstName.toUtf8();
@@ -22,7 +23,7 @@ void RequestRegister::requestSEND()
     QByteArray bytePhoneNumber = PhoneNumber.toUtf8();
     QByteArray byteEmail = Email.toUtf8();
     QByteArray byteCNP = CNP.toUtf8();
-
+    QByteArray byteSpecializare;
     const char* dataUser = byteUser.constData();
     const char* dataPass = bytePass.constData();
     const char* dataFirstName = byteFirstName.constData();
@@ -33,9 +34,13 @@ void RequestRegister::requestSEND()
     const char* dataSpecializare;
     if(doctor==true)
     {
-        QByteArray byteSpecializare = specializare.toUtf8();
+        byteSpecializare = specializare.toUtf8();
+        //qDebug()<<"specializare2: "<<byteSpecializare<<"\n";
         dataSpecializare = byteSpecializare.constData();
+        //qDebug()<<"specializare3: "<<dataSpecializare<<"\n";
     }
+
+    //qDebug() << dataUser<<" "<<dataPass<<" "<<dataFirstName<<" "<<dataLastName<<" "<<dataPhoneNumber<<" "<<dataEmail<<" "<<dataCNP<<" "<<dataSpecializare<<" ";
 
     char* buff;
     if(doctor==true)
@@ -79,7 +84,6 @@ void RequestRegister::requestSEND()
         qDebug() << "Message sent: " << buff;
         // insertCreds()
     }
-
-    free(buff);
+    //free(buff);
 }
 
